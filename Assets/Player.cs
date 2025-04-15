@@ -1,16 +1,21 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
     public Rigidbody2D rb;
     private Animator _animator;
 
-    [Header("Movement setup")] 
+    [Header("Movement")] 
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpForce;
     [SerializeField] private float doubleJumpForce;
     private bool _canDoubleJump;
+
+    [Header("Buffer jump")] 
+    [SerializeField] private float bufferJumpWindow = 0.25f;
+    private float _bufferJumpPressed = -1;
     
     [Header("Wall interactions")] 
     [SerializeField] private float wallJumpDuration = 0.6f;
@@ -24,7 +29,7 @@ public class Player : MonoBehaviour
     private bool _isKnocked;
     private bool _canBeKnocked;
     
-    [Header("Collision info")]
+    [Header("Collision")]
     [SerializeField] private float groundCheckDistance;
     [SerializeField] private float wallCheckDistance;
     [SerializeField] private LayerMask whatIsGround;
@@ -97,13 +102,33 @@ public class Player : MonoBehaviour
     {
         _isAirborne = false;
         _canDoubleJump = true;
+        
+        AttemptBufferJump();
     }
     private void HandleInput()
     {
         _xInput = Input.GetAxisRaw("Horizontal");
         _yInput = Input.GetAxisRaw("Vertical");
         if (Input.GetKeyDown(KeyCode.Space))
+        {
             JumpButton();
+            RequestBufferJump();
+        }
+    }
+
+    private void RequestBufferJump()
+    {
+        if (_isAirborne)
+            _bufferJumpPressed = Time.time;
+    }
+
+    private void AttemptBufferJump()
+    {
+        if (Time.time < _bufferJumpPressed + bufferJumpWindow)
+        {
+            _bufferJumpPressed = 0;
+            Jump();
+        }
     }
 
     private void JumpButton()
