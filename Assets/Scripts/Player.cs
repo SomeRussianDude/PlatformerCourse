@@ -50,6 +50,7 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         _animator = GetComponentInChildren<Animator>();
+        
     }
     // Update is called once per frame
     void Update()
