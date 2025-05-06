@@ -45,6 +45,9 @@ public class Player : MonoBehaviour
     private bool _facingRight = true;
     private int _facingDir = 1;
 
+    [Header("VFX")] 
+    [SerializeField] private GameObject _deathVFX;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -82,7 +85,13 @@ public class Player : MonoBehaviour
         //_canBeKnocked = true;
         _isKnocked = false;
     }
-    
+
+    public void Die()
+    {
+        GameObject deathVFX = Instantiate(_deathVFX, transform.position, Quaternion.identity);
+        Destroy(gameObject);
+    }
+
     private void HandleWallSlide()
     {
         bool canWallSlide = _isWallDetected && rb.linearVelocity.y < 0;
