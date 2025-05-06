@@ -4,6 +4,9 @@ public class GameManager : MonoBehaviour
 {
    public static GameManager Instance;
    public Player player;
+
+   [Header("Fruit GameManager")] 
+   public bool _fruitsHaveRandomLook;
    public int _fruitsCollected = 0;
    public void Awake()
    {
@@ -13,8 +16,7 @@ public class GameManager : MonoBehaviour
          Destroy(gameObject);
    }
 
-   public void AddFruit()
-   {
-      _fruitsCollected++;
-   }
+   public void AddFruit() => _fruitsCollected++;
+   
+   public bool FruitsHaveRandomLook => _fruitsHaveRandomLook;
 }
