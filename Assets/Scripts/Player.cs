@@ -6,12 +6,15 @@ public class Player : MonoBehaviour
 {
     public Rigidbody2D rb;
     private Animator _animator;
+    private CapsuleCollider2D _collider;
 
     [Header("Movement")] 
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpForce;
     [SerializeField] private float doubleJumpForce;
     private bool _canDoubleJump;
+    private float _defaultGravityScale;
+    private bool _canMove = false;
 
     [Header("Buffer & Coyote Jump")] 
     [SerializeField] private float bufferJumpWindow = .25f;
@@ -48,18 +51,29 @@ public class Player : MonoBehaviour
     [Header("VFX")] 
     [SerializeField] private GameObject _deathVFX;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        _collider = GetComponent<CapsuleCollider2D>();
         _animator = GetComponentInChildren<Animator>();
         
     }
+
+    private void Start()
+    {
+        _defaultGravityScale = rb.gravityScale;
+        RespawnFinished(false);
+    }
+    
     // Update is called once per frame
     void Update()
     {
         UpdateAirborneStatus();
 
+        if (!_canMove)
+        {
+            return;
+        }
         if (_isKnocked)
             return;
         HandleInput();
@@ -68,6 +82,23 @@ public class Player : MonoBehaviour
         HandleFlip();
         HandleCollisions();
         HandleAnimations();
+    }
+
+    public void RespawnFinished(bool finished)
+    {
+
+        if (finished)
+        {
+            rb.gravityScale = _defaultGravityScale;
+            _canMove = true;
+            _collider.enabled = true;
+        }
+        else
+        {
+            rb.gravityScale = 0;
+            _canMove = false;
+            _collider.enabled = false;
+        }
     }
     public void Knockback()
     {
