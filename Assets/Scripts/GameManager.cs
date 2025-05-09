@@ -22,10 +22,9 @@ public class GameManager : MonoBehaviour
          Destroy(gameObject);
    }
 
-   public void RespawnPlayer()
-   {
-      StartCoroutine(RespawnCoroutine());
-   }
+   public void UpdateRespawnPosition(Transform newRespawnPoint) => _respawnPoint = newRespawnPoint;
+   
+   public void RespawnPlayer() => StartCoroutine(RespawnCoroutine());
 
    private IEnumerator RespawnCoroutine()
    {
